@@ -25,7 +25,7 @@ Install Laravel versi 13.43.0 menggunakan Composer.
 **Command:**
 
 ```bash
-composer create-project laravel/laravel ems_api "13.11.0"
+composer create-project laravel/laravel ems_api "13.43.0"
 ```
 
 ### 2.2 Database Creation
