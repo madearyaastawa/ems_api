@@ -1,58 +1,196 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Backend Development Documentation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Dokumentasi proses pengembangan backend menggunakan Laravel, mulai dari persiapan tools, instalasi framework, konfigurasi database, hingga implementasi REST API dengan Laravel Sanctum.
 
-## About Laravel
+## 1. Tools & Technologies
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Tools yang digunakan dalam pengembangan proyek:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Tools    | Version            |
+| -------- | ------------------ |
+| PHP      | `8.5.12`           |
+| Composer | `2.10.3`           |
+| MySQL    | `8.0.40`           |
+| Node.js  | `v24.22.1`         |
+| NPM      | `11.19.1`          |
+| Git      | `2.56.0.windows.2` |
+| Laravel  | `13.43.0`          |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 2. Backend Development
 
-## Learning Laravel
+### 2.1 Laravel Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Install Laravel versi 13.43.0 menggunakan Composer.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+**Command:**
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer create-project laravel/laravel ems_api "13.11.0"
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2.2 Database Creation
 
-## Contributing
+Membuat database MySQL yang digunakan oleh aplikasi.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Database Configuration:**
 
-## Code of Conduct
+- Database Name: `ems`
+- Database Driver: `MySQL`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Command:**
 
-## Security Vulnerabilities
+```
+DROP SCHEMA `ems`;
+CREATE SCHEMA `ems`;
+USE `ems`;
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+CREATE USER 'user_ems'@'localhost' IDENTIFIED BY 'password_ems';
+GRANT ALL PRIVILEGES ON `ems`.\* TO 'user_ems'@'localhost';
+FLUSH PRIVILEGES;
+```
 
-## License
+### 2.3 Git Initialization
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Menginisialisasi Git sebagai version control untuk mengelola perubahan kode.
+
+**Command:**
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+```
+
+### 2.4 Environment Configuration
+
+Menyesuaikan file `.env` untuk menghubungkan aplikasi Laravel dengan database.
+
+**Configuration:**
+
+```env
+APP_NAME=Laravel
+APP_ENV=local
+APP_DEBUG=true
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ems
+DB_USERNAME=user_ems
+DB_PASSWORD=password_ems
+```
+
+### 2.5 Database Migration
+
+Menjalankan migration untuk membuat tabel berdasarkan struktur database yang telah didefinisikan pada migration files.
+
+**Command:**
+
+```bash
+php artisan make:migration roles
+php artisan make:migration events
+php artisan make:migration registrations
+php artisan make:migration tickets
+php artisan make:migration attendances
+php artisan migrate
+```
+
+### 2.6 Database Seeding
+
+Mengisi database dengan data awal menggunakan Laravel Seeder.
+
+**Command:**
+
+```bash
+php artisan make:seeder CategorySeeder
+php artisan make:seeder EventSeeder
+php artisan make:seeder RoleSeeder
+php artisan make:seeder UserSeeder
+php artisan db:seed
+```
+
+### 2.7 Model Design
+
+Membuat Eloquent Models untuk merepresentasikan tabel database dan mengelola relasi antar tabel.
+
+**Command:**
+
+```bash
+php artisan make:model Attendance
+php artisan make:model Category
+php artisan make:model Event
+php artisan make:model Registration
+php artisan make:model Role
+php artisan make:model Ticket
+php artisan make:model User
+```
+
+### 2.8 API & Laravel Sanctum Installation
+
+Menginstal Laravel Sanctum untuk menyediakan autentikasi berbasis API token.
+
+**Command:**
+
+```bash
+php artisan install:api
+```
+
+### 2.9 Controllers & API Development
+
+Membuat controller untuk menangani request dan response API serta mengelola operasi CRUD.
+
+**Command:**
+
+```bash
+php artisan make:controller UserController
+php artisan make:controller AuthController
+php artisan make:controller CategoryController
+php artisan make:controller EventController
+php artisan make:controller RegistrationController
+php artisan make:controller TicketController
+php artisan make:controller AttendanceController
+```
+
+Mendaftarkan API resource routes pada `routes/api.php`.
+
+## 3. API Testing
+
+Melakukan pengujian endpoint API menggunakan Postman.
+
+## 4. Project Execution
+
+Menjalankan development server Laravel.
+
+**Command:**
+
+```bash
+php artisan serve
+```
+
+Default local URL:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## 5. Development Progress
+
+| No. | Development Stage             | Status      |
+| --- | ----------------------------- | ----------- |
+| 1   | Tools Installation            | Completed   |
+| 2   | Laravel Installation          | Completed   |
+| 3   | Database Creation             | Completed   |
+| 4   | Git Initialization            | Completed   |
+| 5   | Environment Configuration     | Completed   |
+| 6   | Database Migration            | Completed   |
+| 7   | Database Seeding              | Completed   |
+| 8   | Model Design                  | Completed   |
+| 9   | API & Sanctum Installation    | Completed   |
+| 10  | Controllers & API Development | In Progress |
+| 11  | API Testing                   | Pending     |
+
+## 6. Notes
+
+Dokumentasi ini mencatat tahapan pengembangan backend secara berurutan.
